@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <header>
+  <head>
     <meta charset="UTF-8">
     <title>Home</title>
-  </header>
+  </head>
   <body>
-    <?php
-
-    ?>
+    <?php print $navbar ?>
   </body>
 </html>

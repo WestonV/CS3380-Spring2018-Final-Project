@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
-  <header>
+  <head>
     <meta charset="UTF-8">
     <title>Error</title>
-  </header>
+  </head>
   <body>
-    <?php
-
-    ?>
+    <?php print $navbar ?>
+    <h2><?php print $message; ?></h2>
   </body>
 </html>

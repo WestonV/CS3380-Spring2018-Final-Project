@@ -3,67 +3,343 @@
 
   class App {
     private $model;
-    private $user;
+    private $route;
+    private $data;
+    private $message;
+    private $redirect;
 
     function __construct() {
-      $model = new Model();
-      if ($model->error != '') {
-        // load error controller
-      }
-
-      // need to attempt loading user authentication
+      $this->model = new Model();
+      $this->route = isset($_GET['route']) ? $_GET['route'] : 'home';
+      $this->action = isset($_POST['action']) ? $_POST['action'] : '';
     }
 
     function run() {
-      // deal with routing, url params, and controller loading here
+      if ($this->model->error != '') {
+        $this->route = 'error';
+        return;
+      }
 
-      // may need to pass model/user to certain pages in their constructor
+      $this->data = array();
+      $this->message = '';
+
+      switch($this->action) {
+        case 'login':
+          $this->handleLogin();
+          break;
+        case 'register':
+          $this->handleRegister();
+          break;
+        case 'logout':
+          $this->handleLogout();
+          break;
+        case 'update-profile':
+          $this->handleUpdateProfile();
+          break;
+        case 'add-book':
+          $this->handleAddBook();
+          break;
+        case 'update-book':
+          $this->handleUpdateBook();
+          break;
+        case 'remove-book':
+          $this->handleRemoveBook();
+          break;
+      }
+
       $controller = null;
-      $route = isset($_GET['route']) ? $_GET['route'] : 'home';
-      switch($route) {
+      switch($this->route) {
         case 'error':
-          require_once 'modules/error-module/error.controller.php';
+          require 'modules/error-module/error.controller.php';
           $controller = new ErrorController();
           break;
         case 'book-search':
-          require_once 'modules/book-search-module/book-search.controller.php';
+          require 'modules/book-search-module/book-search.controller.php';
+          $this->handleBookSearch();
           $controller = new BookSearchController();
           break;
         case 'book-details':
-          require_once 'modules/book-details-module/book-details.controller.php';
+          require 'modules/book-details-module/book-details.controller.php';
+          $this->handleGetBook();
           $controller = new BookDetailsController();
           break;
         case 'book-list':
-          require_once 'modules/book-list-module/book-list.controller.php';
-          $controller = new BookListController();
+          $success = $this->handleGetBookList();
+          if ($success) {
+            require 'modules/book-list-module/book-list.controller.php';
+            $controller = new BookListController();
+          } else {
+            require 'modules/error-module/error.controller.php';
+            $controller = new ErrorController();
+          }
           break;
         case 'profile':
-          require_once 'modules/profile-module/profile.controller.php';
-          $controller = new ProfileController();
+          $success = $this->handleGetProfile();
+          if ($success) {
+            require 'modules/profile-module/profile.controller.php';
+            $controller = new ProfileController();
+          } else {
+            require 'modules/error-module/error.controller.php';
+            $controller = new ErrorController();
+          }
           break;
         case 'edit-profile':
-          require_once 'modules/edit-profile-module/edit-profile.controller.php';
+          require 'modules/edit-profile-module/edit-profile.controller.php';
           $controller = new EditProfileController();
           break;
         case 'user-search':
-          require_once 'modules/user-search-module/user-search.controller.php';
+          require 'modules/user-search-module/user-search.controller.php';
+          $this->handleUserSearch();
           $controller = new UserSearchController();
           break;
         case 'login':
-          require_once 'modules/login-module/login.controller.php';
-          $controller = new LoginController();
+          if ($this->verifyAuth()) {
+            header("Location: /home");
+            die();
+          } else {
+            require 'modules/login-module/login.controller.php';
+            $controller = new LoginController($this->redirect);            
+          }
           break;
         case 'register':
-          require_once 'modules/register-module/register.controller.php';
+          require 'modules/register-module/register.controller.php';
           $controller = new RegisterController();
           break;
         default:
-          require_once 'modules/home-module/home.controller.php';
+          require 'modules/home-module/home.controller.php';
           $controller = new HomeController();
           break;
       }
+
       if ($controller != null) {
-        print $controller->getView();
+        require 'components/navbar/navbar.controller.php';
+        $navbar = new NavBarController();
+        $user = $this->model->getUser();        
+        print $controller->getView($this->data, $this->message, $user, $navbar->getView($user, $this->route));
+      }
+    }
+
+    private function verifyAuth() {
+      if (!$this->model->getUser()) {
+        $this->route = 'login';
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    private function handleLogin() {
+      $username = isset($_POST['username']) ? $_POST['username'] : null;
+      $password = isset($_POST['password']) ? $_POST['password'] : null;
+      $this->redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'home';
+
+      if ($username == null && $password == null) {
+        $this->route = 'login';
+        return;
+      }
+
+      list($success, $error) = $this->model->login($username, $password);
+
+      if ($success) {
+        header("Location: /" . $this->redirect);
+        die();
+      } else {
+        $this->message = $error;
+        $this->route = 'login';
+        $this->data = array("username" => $username);
+      }
+    }
+
+    private function handleRegister() {
+      $username = $_POST['username'];
+      $password = $_POST['password'];
+      $confirmed = $_POST['confirmed'];
+      $email = $_POST['email'];
+
+      if (strcmp($password, $confirmed)) {
+        list($success, $error) = $this->model->registerUser($username, $password, $email);
+        if ($success) {
+          header("Location: /login");
+          die();
+        } else {
+          $this->message = $error;
+          $this->route = 'register';
+          $this->data = $_POST;
+        }
+      } else {
+        $this->message = 'Passwords do not match.';
+        $this->route = 'register';
+        $this->data = $_POST;
+      }
+    }
+
+    private function handleLogout() {
+      $this->model->logout();
+      $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'home';
+      header("Location: /" . $redirect);
+      die();
+    }
+
+    private function handleUserSearch() {
+      $search = isset($_GET['search']) ? $_GET['search'] : null;
+
+      if ($search == null) {
+        $this->data = array("users" => array(), "search" => '');
+        return;
+      }
+
+      list($users, $search, $error) = $this->model->searchUsers($search);
+
+      if ($users != null) {
+        $this->data = array("users" => $users, "search" => $search);
+      } else {
+        $this->message = $error;
+        $this->data = array("search" => $search);
+      }
+    }
+
+    private function handleGetProfile() {
+      $username = isset($_GET['user']) ? $_GET['user'] : null;
+      
+      if ($username == null) {
+        $this->message = 'No user specified';
+        return false;
+      }
+
+      list($profile, $error) = $this->model->getProfile($username);
+
+      if ($profile != null) {
+        $this->data = array("profile" => $profile);
+        return true;
+      } else {
+        $this->message = $error;
+        return false;
+      }
+    }
+
+    private function handleUpdateProfile() {
+      if ($this->verifyAuth()) {
+        $password = $_POST['password'];
+        $email = $_POST['email'];
+        $bio = $_POST['bio'];
+
+        list($success, $username, $error) = $this->model->updateProfile($password, $email, $bio);
+
+        if ($success) {
+          list($profile, $search, $error) = $this->model->getProfile($username);
+
+          if ($profile != null) {
+            $this->route = 'profile';
+            $this->data = array("profile" => $profile);
+          } else {
+            $this->message = $error;
+            $this->route = 'error';
+          }
+        } else {
+          $this->message = $error;
+          $this->route = 'edit-profile';
+        }
+      }
+    }
+
+    private function handleGetBookList() {
+      $username = isset($_GET['user']) ? $_GET['user'] : null;
+
+      if ($username == null) {
+        $this->message = 'No user specified';
+        return false;
+      }
+
+      list($list, $error) = $this->model->getBookList($username);
+      
+      if ($list != null) {
+        $this->data = array("list" => $list);
+        return true;
+      } else {
+        $this->message = $error;
+        return false;
+      }
+    }
+
+    private function handleAddBook() {
+      if ($this->verifyAuth()) {
+        $isbn = $_POST['isbn'];
+        $status = $_POST['status'];
+
+        list($success, $error) = $this->model->addBookToList($isbn, $status);
+
+        if ($success) {
+          $this->route = 'book-details';
+        } else {
+          $this->route = 'book-details';
+          $this->message = $error;
+        }
+      }
+    }
+
+    private function handleUpdateBook() {
+      if ($this->verifyAuth()) {
+        $status = $_POST['status'];
+        $rating = $_POST['rating'];
+
+        list($success, $error) = $this->model->updateBookFromList($status, $rating);
+
+        if ($success) {
+          $this->route = 'book-details';
+        } else {
+          $this->route = 'book-details';
+          $this->message = $error;
+        }
+      }
+    }
+
+    private function handleRemoveBook() {
+      if ($this->verifyAuth()) {
+        $id = $_POST['id'];
+
+        list($success, $error) = $this->model->removeBookFromList($id);
+
+        if ($success) {
+          $this->route = 'book-details';
+        } else {
+          $this->route = 'book-details';
+          $this->message = $error;
+        }
+      }
+    }
+
+    private function handleBookSearch() {
+      $search = isset($_GET['search']) ? $_GET['search'] : null;
+
+      if ($search == null) {
+        $this->data = array("books" => array(), "search" => '');
+        return;
+      }
+
+      list($books, $search, $error) = $this->model->searchBooks($search);
+
+      if ($books != null) {
+        $this->data = array("books" => $books, "search" => $search);
+      } else {
+        $this->message = $error;
+        $this->data = array("search" => $search);
+      }
+    }
+
+    private function handleGetBook() {
+      $isbn = isset($_GET['isbn']) ? $_GET['isbn'] : null;
+
+      if ($isbn == null) {
+        return;
+      }
+
+      list($details, $error) = $this->model->getBook($isbn);
+
+      if ($details != null) {
+        $this->data = array("details" => $details);
+      } else {
+        $this->message = $error;
+        $this->data = array("details" => $details);
       }
     }
   }

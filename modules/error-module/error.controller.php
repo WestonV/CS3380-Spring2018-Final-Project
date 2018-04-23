@@ -1,12 +1,10 @@
 <?php
   class ErrorController {
-    private $message;
+    function __construct() {
 
-    function __construct($message) {
-      $this->message = $message
     }
 
-    function getView() {
+    function getView($data, $message, $user, $navbar) {
       ob_start();
       require 'error.view.php';
       return ob_get_clean();

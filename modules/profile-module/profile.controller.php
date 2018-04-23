@@ -4,9 +4,9 @@
 
     }
     
-    function getView() {
+    function getView($data, $message, $user, $navbar) {
       ob_start();
-      require './profile.view.php';
+      require 'profile.view.php';
       return ob_get_clean();
     }
   }
