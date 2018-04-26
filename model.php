@@ -49,28 +49,60 @@
 			} else {
 				$this->user = null;
 				$_SESSION['username'] = '';
-				return array(false, "Invalid login information. Please try again.");
+				return array(false, "Username/Password is incorrect. Please try again.");
 			}
     }
 
     public function registerUser($username, $password, $email) {
-      $sql = "BEGIN; INSERT INTO UserAuth (username, password) VALUES (?, ?); INSERT INTO UserDetails (userID, email, joinDate) VALUES (LAST_INSERT_ID(), ?, NOW()); COMMIT;";
+      $sqlAuth = "INSERT INTO UserAuth (username, password) VALUES (?, ?);";
+      $sqlDetails = "INSERT INTO UserDetails (userID, email, joinDate) VALUES (LAST_INSERT_ID(), ?, NOW());";
 
-      $stmt = $this->mysqli->prepare($sql);
+      $worked = true;
+      $error = "";
 
-      if (!($stmt->bind_param("sss", $username, password_hash($password, PASSWORD_DEFAULT), $email))) {
-        return array(false, "Binding query failed.");
+      $this->mysqli->autocommit(FALSE); 
+      // query for Auth creation
+      if (!($stmtAuth = $this->mysqli->prepare($sqlAuth))) {
+        $worked = false;
+        $error = "Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error;
+      }
+
+      if (!($stmtAuth->bind_param("ss", $username, $password))) {
+        $worked = false;
+        $error = "Binding query failed.";
 			}
 			
-			if (!$stmt->execute()) {
-        return array(false, "Execute of statement failed: " . $stmt->error);
+			if (!$stmtAuth->execute()) {
+        $worked = false;
+        $error = "Execute of statement failed: " . $stmtAuth->error;
       }
-      
-			if (!($result = $stmt->get_result())) {
-        return array(false, "Getting result failed: " . $stmt->error);
+
+      // query for Details creation
+      if (!($stmtDetails = $this->mysqli->prepare($sqlDetails))) {
+        $worked = false;
+        $error = "Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error;
       }
-      
-      return array(true);
+
+      if (!($stmtDetails->bind_param("s", $email))) {
+        $worked = false;
+        $error = "Binding query failed.";
+			}
+			
+			if (!$stmtDetails->execute()) {
+        $worked = false;
+        $error = "Execute of statement failed: " . $stmtDetails->error;
+      }
+
+      $stmtAuth->close();
+      $stmtDetails->close();
+
+      if ($worked) {
+        $this->mysqli->commit();
+        return array(true, "");
+      } else {
+        $this->mysqli->rollback();
+        return array(false, "Username already exists");
+      }
     }
 
     public function logout() {
@@ -104,6 +136,8 @@
 					array_push($users, $user);
 				}
       }
+
+      $stmt->close();
       return array($users, $search, '');
     }
 
@@ -145,6 +179,8 @@
       $this->user->email = $email;
       $this->user->bio = $bio;
 
+      $stmt->close();
+
       return array(true, $this->user->username, '');
     }
 
@@ -166,6 +202,8 @@
 			if (!($result = $stmt->get_result())) {
         return array(null, "Getting result failed: " . $stmt->error);
       }
+
+      $stmt->close();
 
       if ($result->num_rows > 0) {
 				while($book = $result->fetch_assoc()) {
@@ -194,6 +232,8 @@
         return array(false, "Getting result failed: " . $stmt->error);
       }
 
+      $stmt->close();
+
       return array(true, '');
     }
 
@@ -214,6 +254,8 @@
         return array(false, "Getting result failed: " . $stmt->error);
       }
 
+      $stmt->close();
+
       return array(true, '');
     }
 
@@ -233,6 +275,8 @@
 			if (!($result = $stmt->get_result())) {
         return array(false, "Getting result failed: " . $stmt->error);
       }
+
+      $stmt->close();
 
       return array(true, '');
     }

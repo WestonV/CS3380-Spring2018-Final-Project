@@ -102,8 +102,13 @@
           }
           break;
         case 'register':
-          require 'modules/register-module/register.controller.php';
-          $controller = new RegisterController();
+          if ($this->verifyAuth()) {
+            header("Location: /home");
+            die();
+          } else {
+            require 'modules/register-module/register.controller.php';
+            $controller = new RegisterController();         
+          }
           break;
         default:
           require 'modules/home-module/home.controller.php';
@@ -131,8 +136,8 @@
     private function handleLogin() {
       $username = isset($_POST['username']) ? $_POST['username'] : null;
       $password = isset($_POST['password']) ? $_POST['password'] : null;
-      $this->redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'home';
 
+      $this->redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'home';
       if ($username == null && $password == null) {
         $this->route = 'login';
         return;
@@ -151,13 +156,22 @@
     }
 
     private function handleRegister() {
-      $username = $_POST['username'];
-      $password = $_POST['password'];
-      $confirmed = $_POST['confirmed'];
-      $email = $_POST['email'];
+      $username = isset($_POST['username']) ? $_POST['username'] : null;
+      $email = isset($_POST['email']) ? $_POST['email'] : null;
+      $password = isset($_POST['password']) ? $_POST['password'] : null;
+      $confirmed = isset($_POST['confirmed']) ? $_POST['confirmed'] : null;
 
-      if (strcmp($password, $confirmed)) {
-        list($success, $error) = $this->model->registerUser($username, $password, $email);
+      $this->redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'home';
+
+      if ($username == null || $email == null || $password == null || $confirmed == null) {
+        $this->message = 'One or more fields not provided';
+        $this->route = 'register';
+        $this->data = $_POST;
+        return;
+      }
+
+      if (strcmp($password, $confirmed) == 0) {
+        list($success, $error) = $this->model->registerUser($username, password_hash($password, PASSWORD_DEFAULT), $email);
         if ($success) {
           header("Location: /login");
           die();
@@ -219,9 +233,9 @@
 
     private function handleUpdateProfile() {
       if ($this->verifyAuth()) {
-        $password = $_POST['password'];
-        $email = $_POST['email'];
-        $bio = $_POST['bio'];
+        $password = isset($_GET['password']) ? $_GET['password'] : null;
+        $email = isset($_GET['email']) ? $_GET['email'] : null;
+        $bio = isset($_GET['bio']) ? $_GET['bio'] : null;
 
         list($success, $username, $error) = $this->model->updateProfile($password, $email, $bio);
 
@@ -263,8 +277,8 @@
 
     private function handleAddBook() {
       if ($this->verifyAuth()) {
-        $isbn = $_POST['isbn'];
-        $status = $_POST['status'];
+        $isbn = isset($_GET['isbn']) ? $_GET['isbn'] : null;
+        $status = isset($_GET['status']) ? $_GET['status'] : null;
 
         list($success, $error) = $this->model->addBookToList($isbn, $status);
 
@@ -279,10 +293,11 @@
 
     private function handleUpdateBook() {
       if ($this->verifyAuth()) {
-        $status = $_POST['status'];
-        $rating = $_POST['rating'];
+        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        $status = isset($_GET['status']) ? $_GET['status'] : null;
+        $rating = isset($_GET['rating']) ? $_GET['rating'] : null;
 
-        list($success, $error) = $this->model->updateBookFromList($status, $rating);
+        list($success, $error) = $this->model->updateBookInList($id, $status, $rating);
 
         if ($success) {
           $this->route = 'book-details';
@@ -295,7 +310,7 @@
 
     private function handleRemoveBook() {
       if ($this->verifyAuth()) {
-        $id = $_POST['id'];
+        $id = isset($_GET['id']) ? $_GET['id'] : null;
 
         list($success, $error) = $this->model->removeBookFromList($id);
 

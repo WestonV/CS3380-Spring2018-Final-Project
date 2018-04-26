@@ -2,6 +2,8 @@ Options -Indexes
 
 RewriteEngine On
 
+RewriteRule \.(css|jpe?g|gif|png|js|ico)$ - [L]
+
 RewriteCond %{THE_REQUEST} \s/+index\.php\?([^\s&]+) [NC]
 RewriteRule ^ %1? [R=301,L]
 

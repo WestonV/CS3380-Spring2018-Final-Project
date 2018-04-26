@@ -1,0 +1,19 @@
+.register-form {
+  margin-top: 10%;
+  padding: 1%;
+  background-color: #007bff;
+  height: 25%;
+  border-radius: 10px;
+  border: solid 5px #228dff;
+  -webkit-box-shadow: -8px 13px 42px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: -8px 13px 42px 0px rgba(0,0,0,0.75);
+  box-shadow: -8px 13px 42px 0px rgba(0,0,0,0.75);
+}
+
+.register-input {
+  margin-top: 3px;
+}
+
+.register-button {
+  margin-top: 10px;
+}
