@@ -39,6 +39,64 @@ CREATE TABLE BookList (
 
   The api is at [isbndb.com](https://isbndb.com/ "ISBN Database") and the docs are [here](https://isbndb.com/apidocs "ISBN Database Docs")
 
+## CRUD Operations
+
+### Login Page
+  The login page uses 'Read' to allow for a user to login to the website
+
+  [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L43-L54 "Login Function")
+
+  It's also available in the 'model.php' file at lines 43-54
+
+### Register Page
+  The register page uses 'Create' to create login for the website
+
+  [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L56-L106 " Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
+### User Search Page
+  The user search page uses 'Read' to get the list of profiles in the database
+
+  [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L113-L142 "Search Users Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
+### Profile Page
+  The profile page uses 'Read' to get the profile information of a certain username
+
+  [Link to the code (in this github repo)](link " Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
+### Edit Profie Page
+  asd
+
+  [Link to the code (in this github repo)](link " Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
+### Book Search Page
+  asd
+
+  [Link to the code (in this github repo)](link " Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
+### Book Details Page
+  asd
+
+  [Link to the code (in this github repo)](link " Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
+### Book List Page
+  asd
+
+  [Link to the code (in this github repo)](link " Function")
+
+  It's also available in the 'model.php' file at lines 56-106
+
 ## Video Walkthrough
   <a href="http://www.youtube.com/watch?feature=player_embedded&v=VpDVtJyyrN4
   " target="_blank"><img src="http://img.youtube.com/vi/VpDVtJyyrN4/0.jpg" 
