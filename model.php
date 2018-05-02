@@ -159,29 +159,56 @@
       $email = isset($email) ? $email : $this->user->email;
       $bio = isset($bio) ? $bio : $this->user->bio;
 
-      $sql = "BEGIN; UPDATE UserAuth SET password = ? WHERE id = ?; UPDATE UserDetails SET email = ?, bio = ? WHERE userID = ?; COMMIT;";
+      $sqlAuth = "UPDATE UserAuth SET password = ? WHERE id = ?;";
+      $sqlDetails = "UPDATE UserDetails SET email = ?, bio = ? WHERE userID = ?;"
 
-      $stmt = $this->mysqli->prepare($sql);
+      $this->mysqli->autocommit(FALSE); 
 
-      if (!($stmt->bind_param("sissi", password, $this->user->id, $email, $bio, $this->user->id))) {
-        return array(false, '', "Binding query failed.");
+      // query for Auth creation
+      if (!($stmtAuth = $this->mysqli->prepare($sqlAuth))) {
+        $worked = false;
+        $error = "Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error;
+      }
+
+      if (!($stmtAuth->bind_param("si", $password, $id))) {
+        $worked = false;
+        $error = "Binding query failed.";
 			}
 			
-			if (!$stmt->execute()) {
-        return array(false, '', "Execute of statement failed: " . $stmt->error);
-      }
-      
-			if (!($result = $stmt->get_result())) {
-        return array(false, '', "Getting result failed: " . $stmt->error);
+			if (!$stmtAuth->execute()) {
+        $worked = false;
+        $error = "Execute of statement failed: " . $stmtAuth->error;
       }
 
-      $this->user->password = $password;
-      $this->user->email = $email;
-      $this->user->bio = $bio;
+      // query for Details creation
+      if (!($stmtDetails = $this->mysqli->prepare($sqlDetails))) {
+        $worked = false;
+        $error = "Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error;
+      }
 
-      $stmt->close();
+      if (!($stmtDetails->bind_param("ssi", $email, $bio, $id))) {
+        $worked = false;
+        $error = "Binding query failed.";
+			}
+			
+			if (!$stmtDetails->execute()) {
+        $worked = false;
+        $error = "Execute of statement failed: " . $stmtDetails->error;
+      }
 
-      return array(true, $this->user->username, '');
+      $stmtAuth->close();
+      $stmtDetails->close();
+
+      if ($worked) {
+        $this->mysqli->commit();
+        $this->user->password = $password;
+        $this->user->email = $email;
+        $this->user->bio = $bio;
+        return array(true, $this->user->username, '');
+      } else {
+        $this->mysqli->rollback();
+        return array(false, '', "Getting result failed: " . $error);
+      }
     }
 
     public function getBookList($username) {
