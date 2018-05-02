@@ -16,30 +16,26 @@
       <input class="form-control" style="width: 15%" placeholder="Book Title" type="text" name="search" value="<?php echo $data['search'] ?>">
       <input class="btn btn-md btn-success" type="submit" value="Search">
     </form>
-    <?php
-      //var_dump($message);
-      //var_dump($data);
-    ?>
     <table class="table">
-  <thead class="thead-light">
-    <tr>
-      <th scope="col">Image</th>
-      <th scope="col">Title</th>
-      <th scope="col">Author</th>
-      <th scope="col">Date Published</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php
-      if (!empty($books['books'])) {
-        foreach ($books['books'] as $book) {
-          include 'book-search-populate.php';
-        }
-      } else {
-        echo "<h2>Please search for a book</h2>";
-      }
-    ?>
-  </tbody>
-</table>
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Title</th>
+          <th scope="col">Author</th>
+          <th scope="col">Date Published</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+          if (!empty($books['books'])) {
+            foreach ($books['books'] as $book) {
+              include 'book-search-populate.php';
+            }
+          } else {
+            echo "<h2>Please search for a book</h2>";
+          }
+        ?>
+      </tbody>
+    </table>
   </body>
 </html>
