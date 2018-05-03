@@ -27,12 +27,12 @@
     </div>
     <div class="form-group">
       <label for="exampleInputPassword1">Change your bio</label>
-      <textarea name="bio" class="form-control" id="editBioTextField"> <?php echo $user->bio ?> </textarea>
+      <textarea name="bio" class="form-control" id="editBioTextField"><?php echo $user->bio ?></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Save Changes</button>
     <input type="hidden" name="action" value="update-profile">
 </form>
 
-
+<p class="error"><?php echo $message ?></p>
   </body>
 </html>

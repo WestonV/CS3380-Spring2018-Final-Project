@@ -248,7 +248,6 @@
             $this->route = 'edit-profile';
           }
         } else {
-          print "password don't match";
           $this->message = 'Passwords do not match.';
           $this->route = 'edit-profile';
           $this->data = $_POST;
