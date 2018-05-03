@@ -11,9 +11,17 @@
   </head>
   <body>
     <?php print $navbar ?>
-    <?php
-      var_dump($message);
-      var_dump($data);
-    ?>
+    <h4><?php echo $profile->username ?></h1>
+    <h5><?php echo $profile->joinDate ?></h4>
+    <h5><?php echo $profile->email ?></h4>
+    <p><?php echo $profile->bio ?></p>
+
+  <?php
+    if($editable == true){
+      echo'<a href="/edit-profile">
+            <button type="button" class="btn btn-success" >Edit your profile</button>
+          </a>';
+      }
+  ?>
   </body>
 </html>

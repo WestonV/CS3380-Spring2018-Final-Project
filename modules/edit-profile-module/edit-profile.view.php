@@ -11,5 +11,28 @@
   </head>
   <body>
     <?php print $navbar ?>
+
+  <form action="edit-profile" method="POST">
+    <div class="form-group">
+      <label for="exampleInputEmail1">Change your email address</label>
+      <input name="email" type="email" class="form-control" id="editEmail" aria-describedby="emailHelp" value="<?php echo $user->email ?>">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Change your password</label>
+      <input name="password" type="password" class="form-control" id="editPassword" value="">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Confirm your new password</label>
+      <input name="confirmed" type="password" class="form-control" id="editConfirmed">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Change your bio</label>
+      <textarea name="bio" class="form-control" id="editBioTextField"> <?php echo $user->bio ?> </textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <input type="hidden" name="action" value="update-profile">
+</form>
+
+
   </body>
 </html>

@@ -233,25 +233,25 @@
 
     private function handleUpdateProfile() {
       if ($this->verifyAuth()) {
-        $password = isset($_GET['password']) ? $_GET['password'] : null;
-        $email = isset($_GET['email']) ? $_GET['email'] : null;
-        $bio = isset($_GET['bio']) ? $_GET['bio'] : null;
+        $password = isset($_POST['password']) ? $_POST['password'] : null;
+        $confirmed = isset($_POST['confirmed']) ? $_POST['confirmed'] : null;
+        $email = isset($_POST['email']) ? $_POST['email'] : null;
+        $bio = isset($_POST['bio']) ? $_POST['bio'] : null;
 
-        list($success, $username, $error) = $this->model->updateProfile($password, $email, $bio);
-
-        if ($success) {
-          list($profile, $search, $error) = $this->model->getProfile($username);
-
-          if ($profile != null) {
-            $this->route = 'profile';
-            $this->data = array("profile" => $profile);
+        if (strcmp($confirmed, $password) == 0) {
+          list($success, $username, $error) = $this->model->updateProfile($password, $email, $bio);
+          if ($success) {
+            header("Location: /profile?user=" . $username);
+            die();
           } else {
             $this->message = $error;
-            $this->route = 'error';
+            $this->route = 'edit-profile';
           }
         } else {
-          $this->message = $error;
+          print "password don't match";
+          $this->message = 'Passwords do not match.';
           $this->route = 'edit-profile';
+          $this->data = $_POST;
         }
       }
     }

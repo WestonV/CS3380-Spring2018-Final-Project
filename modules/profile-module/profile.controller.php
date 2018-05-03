@@ -5,6 +5,8 @@
     }
     
     function getView($data, $message, $user, $navbar) {
+      $profile = isset($data['profile']) ? $data['profile'] : [];
+      $editable = ($profile->username == $user->username);
       ob_start();
       require 'profile.view.php';
       return ob_get_clean();

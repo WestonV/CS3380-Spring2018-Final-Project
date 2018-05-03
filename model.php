@@ -160,17 +160,18 @@
       $bio = isset($bio) ? $bio : $this->user->bio;
 
       $sqlAuth = "UPDATE UserAuth SET password = ? WHERE id = ?;";
-      $sqlDetails = "UPDATE UserDetails SET email = ?, bio = ? WHERE userID = ?;"
+      $sqlDetails = "UPDATE UserDetails SET email = ?, bio = ? WHERE userID = ?;";
+      $worked = true;
+      $error = "";
 
       $this->mysqli->autocommit(FALSE); 
-
       // query for Auth creation
       if (!($stmtAuth = $this->mysqli->prepare($sqlAuth))) {
         $worked = false;
         $error = "Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error;
       }
 
-      if (!($stmtAuth->bind_param("si", $password, $id))) {
+      if (!($stmtAuth->bind_param("si", $password, $this->user->id))) {
         $worked = false;
         $error = "Binding query failed.";
 			}
@@ -186,7 +187,7 @@
         $error = "Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error;
       }
 
-      if (!($stmtDetails->bind_param("ssi", $email, $bio, $id))) {
+      if (!($stmtDetails->bind_param("ssi", $email, $bio, $this->user->id))) {
         $worked = false;
         $error = "Binding query failed.";
 			}

@@ -12,12 +12,28 @@
   <body>
     <?php print $navbar ?>
     <form action="user-search" method="GET">
-      <input type="text" name="search" value="<?php echo $data['search']?>">
-      <input type="submit" value="Search">
+      <input type="text" name="search" value="<?php echo $data['search']?>" class="">
+      <input type="submit" value="Search" class="">
     </form>
+
+    <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">Join Date</th>
+    </tr>
+  </thead>
+  <tbody>
     <?php
-      var_dump($message);
-      var_dump($data);
+    
+      foreach ($users as $value) {
+        include 'user-row.php';
+      }
+      
     ?>
+  </tbody>
+</table>
+
+
   </body>
 </html>
