@@ -7,4 +7,5 @@
   $PASS=''; // password for database account
   
   $API_KEY=''; // API key for the ISBN Database rest-server
+  //lol
 ?>
