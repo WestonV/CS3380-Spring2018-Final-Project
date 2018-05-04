@@ -215,7 +215,7 @@
     public function getBookList($username) {
       $list = array();
 
-      $sql = "SELECT id, isbn, status, rating from BookList where userID = (SELECT id from UserAuth where username = ?);";
+      $sql = "SELECT id, isbn, status, rating, title, image from BookList where userID = (SELECT id from UserAuth where username = ?);";
 
       $stmt = $this->mysqli->prepare($sql);
 
@@ -232,32 +232,23 @@
       }
 
       $stmt->close();
-
-      if ($result->num_rows > 0) {
 				while($book = $result->fetch_assoc()) {
 					array_push($list, $book);
         }
         return array($list, '');
-			} else {
-        return array(null, 'There is no user with that name');
-      }
     }
 
-    public function addBookToList($isbn, $status) {
-      $sql = "INSERT INTO BookList (userID, isbn, status) VALUES (?, ?, ?);";
+    public function addBookToList($isbn, $status, $title, $image) {
+      $sql = "INSERT INTO BookList (userID, isbn, status, title, image) VALUES (?, ?, ?, ?, ?);";
 
       $stmt = $this->mysqli->prepare($sql);
 
-      if (!($stmt->bind_param("iss", $this->user->id, $isbn, $status))) {
+      if (!($stmt->bind_param("issss", $this->user->id, $isbn, $status, $title, $image))) {
         return array(false, "Binding query failed.");
 			}
 			
 			if (!$stmt->execute()) {
         return array(false, "Execute of statement failed: " . $stmt->error);
-      }
-      
-			if (!($result = $stmt->get_result())) {
-        return array(false, "Getting result failed: " . $stmt->error);
       }
 
       $stmt->close();
@@ -277,10 +268,6 @@
 			if (!$stmt->execute()) {
         return array(false, "Execute of statement failed: " . $stmt->error);
       }
-      
-			if (!($result = $stmt->get_result())) {
-        return array(false, "Getting result failed: " . $stmt->error);
-      }
 
       $stmt->close();
 
@@ -298,10 +285,6 @@
 			
 			if (!$stmt->execute()) {
         return array(false, "Execute of statement failed: " . $stmt->error);
-      }
-      
-			if (!($result = $stmt->get_result())) {
-        return array(false, "Getting result failed: " . $stmt->error);
       }
 
       $stmt->close();

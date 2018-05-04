@@ -12,28 +12,23 @@
   <body>
     <?php print $navbar ?>
     <form action="user-search" method="GET">
-      <input type="text" name="search" value="<?php echo $data['search']?>" class="">
-      <input type="submit" value="Search" class="">
+      <input class="form-control" style="width: 15%" placeholder="Username" type="text" name="search" value="<?php echo $data['search'] ?>">
+      <input class="btn btn-md btn-success" type="submit" value="Search">
     </form>
-
     <table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Join Date</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php
-    
-      foreach ($users as $value) {
-        include 'user-row.php';
-      }
-      
-    ?>
-  </tbody>
-</table>
-
-
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Join Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+          foreach ($users as $value) {
+            include 'user-row.php';
+          }
+        ?>
+      </tbody>
+    </table>
   </body>
 </html>

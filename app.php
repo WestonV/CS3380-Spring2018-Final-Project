@@ -65,13 +65,15 @@
           break;
         case 'book-list':
           $success = $this->handleGetBookList();
-          if ($success) {
+          /*if ($success) {
             require 'modules/book-list-module/book-list.controller.php';
             $controller = new BookListController();
           } else {
             require 'modules/error-module/error.controller.php';
             $controller = new ErrorController();
-          }
+          }*/
+            require 'modules/book-list-module/book-list.controller.php';
+            $controller = new BookListController();
           break;
         case 'profile':
           $success = $this->handleGetProfile();
@@ -259,8 +261,7 @@
       $username = isset($_GET['user']) ? $_GET['user'] : null;
 
       if ($username == null) {
-        $this->message = 'No user specified';
-        return false;
+        header('Location: /home');
       }
 
       list($list, $error) = $this->model->getBookList($username);
@@ -276,15 +277,14 @@
 
     private function handleAddBook() {
       if ($this->verifyAuth()) {
-        $isbn = isset($_GET['isbn']) ? $_GET['isbn'] : null;
-        $status = isset($_GET['status']) ? $_GET['status'] : null;
+        $isbn = isset($_POST['isbn']) ? $_POST['isbn'] : null;
+        $status = isset($_POST['status']) ? $_POST['status'] : null;
+        $title = isset($_POST['title']) ? $_POST['title'] : null;
+        $image = isset($_POST['image']) ? $_POST['image'] : null;
 
-        list($success, $error) = $this->model->addBookToList($isbn, $status);
+        list($success, $error) = $this->model->addBookToList($isbn, $status, $title, $image);
 
-        if ($success) {
-          $this->route = 'book-details';
-        } else {
-          $this->route = 'book-details';
+        if (!$success) {
           $this->message = $error;
         }
       }
@@ -292,16 +292,13 @@
 
     private function handleUpdateBook() {
       if ($this->verifyAuth()) {
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
-        $status = isset($_GET['status']) ? $_GET['status'] : null;
-        $rating = isset($_GET['rating']) ? $_GET['rating'] : null;
+        $id = isset($_POST['id']) ? $_POST['id'] : null;
+        $status = isset($_POST['status']) ? $_POST['status'] : null;
+        $rating = isset($_POST['rating']) ? (int)$_POST['rating'] : null;
 
         list($success, $error) = $this->model->updateBookInList($id, $status, $rating);
 
-        if ($success) {
-          $this->route = 'book-details';
-        } else {
-          $this->route = 'book-details';
+        if (!$success) {
           $this->message = $error;
         }
       }
@@ -309,14 +306,11 @@
 
     private function handleRemoveBook() {
       if ($this->verifyAuth()) {
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        $id = isset($_POST['id']) ? $_POST['id'] : null;
 
         list($success, $error) = $this->model->removeBookFromList($id);
 
-        if ($success) {
-          $this->route = 'book-details';
-        } else {
-          $this->route = 'book-details';
+        if (!$success) {
           $this->message = $error;
         }
       }

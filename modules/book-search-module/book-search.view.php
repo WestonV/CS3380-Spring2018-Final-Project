@@ -13,8 +13,8 @@
   <body>
     <?php print $navbar ?>
     <form action="book-search" method="GET">
-      <input type="text" name="search" value="<?php echo $data['search'] ?>">
-      <input type="submit" value="Search">
+      <input class="form-control" style="width: 15%" placeholder="Book Title" type="text" name="search" value="<?php echo $data['search'] ?>">
+      <input class="btn btn-md btn-success" type="submit" value="Search">
     </form>
     <?php
       //var_dump($message);
