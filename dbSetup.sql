@@ -17,8 +17,10 @@ CREATE TABLE UserDetails (
 CREATE TABLE BookList (
   id INT NOT NULL auto_increment PRIMARY KEY, 
   userID INT NOT NULL,
-  isbn VARCHAR(13) NOT NULL UNIQUE,
+  isbn VARCHAR(13) NOT NULL,
   status ENUM('Finished', 'InProgress', 'PlanToRead', 'Dropped') NOT NULL,
+  image VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL,
   rating INT,
   FOREIGN KEY (userID) REFERENCES UserAuth(id)
 );
