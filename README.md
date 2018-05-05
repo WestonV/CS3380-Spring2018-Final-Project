@@ -25,8 +25,10 @@ CREATE TABLE UserDetails (
 CREATE TABLE BookList (
   id INT NOT NULL auto_increment PRIMARY KEY, 
   userID INT NOT NULL,
-  isbn VARCHAR(13) NOT NULL UNIQUE,
+  isbn VARCHAR(13) NOT NULL,
   status ENUM('Finished', 'InProgress', 'PlanToRead', 'Dropped') NOT NULL,
+  image VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL,
   rating INT,
   FOREIGN KEY (userID) REFERENCES UserAuth(id)
 );
@@ -39,65 +41,77 @@ CREATE TABLE BookList (
 
   The api is at [isbndb.com](https://isbndb.com/ "ISBN Database") and the docs are [here](https://isbndb.com/apidocs "ISBN Database Docs")
 
+## Video Walkthrough
+  <a href="http://www.youtube.com/watch?feature=player_embedded&v=EyWP0bmxpyU
+  " target="_blank"><img src="http://img.youtube.com/vi/EyWP0bmxpyU/0.jpg" 
+  alt="Application Demonstration Video" width="512" height="288" border="5" /></a>
+
 ## CRUD Operations
 
-### Login Page
-  The login page uses 'Read' to allow for a user to login to the website
+* Login Page
 
-  [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L43-L54 "Login Function")
+    * The login page uses 'Read' to allow for a user to login to the website
 
-  It's also available in the 'model.php' file at lines 43-54
+    * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L43-L54 "Login Function")
 
-### Register Page
-  The register page uses 'Create' to create login for the website
+    * It's also available in the 'model.php' file at lines 43-54
 
-  [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L56-L106 " Function")
+* Register Page
+  
+  * The register page uses 'Create' to create login for the website
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L56-L106 " Function")
 
-### User Search Page
-  The user search page uses 'Read' to get the list of profiles in the database
+  * It's also available in the 'model.php' file at lines 56-106
 
-  [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L113-L142 "Search Users Function")
+* User Search Page
+  
+  * The user search page uses 'Read' to get the list of profiles in the database
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/46ed53deb28da44fee45efdd26a84d11dc64412c/model.php#L113-L142 "Search Users Function")
 
-### Profile Page
-  The profile page uses 'Read' to get the profile information of a certain username
+  * It's also available in the 'model.php' file at lines 113-142
 
-  [Link to the code (in this github repo)](link " Function")
+* Profile Page
+  
+  * The profile page uses 'Read' to get the profile information of a certain username
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/b490f931edf5e679f2389bda74370e6e36986e86/model.php#L144-L155 "Get Profile Function")
 
-### Edit Profie Page
-  asd
+  * It's also available in the 'model.php' file at lines 144-155
 
-  [Link to the code (in this github repo)](link " Function")
+* Edit Profie Page
+  
+  * The edit profile page uses 'Update' to change the email, password, or bio of a user
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/b490f931edf5e679f2389bda74370e6e36986e86/model.php#L157-L213 "Update Profile Function")
 
-### Book Search Page
-  asd
+  * It's also available in the 'model.php' file at lines 157-213
 
-  [Link to the code (in this github repo)](link " Function")
+* Book Search Page
+  
+  * Book search page makes a call to an API to display a list of books based off the title searched for
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/b490f931edf5e679f2389bda74370e6e36986e86/model.php#L297-L320 "Book Search Function")
 
-### Book Details Page
-  asd
+  * It's also available in the 'model.php' file at lines 297-320
 
-  [Link to the code (in this github repo)](link " Function")
+* Book Details Page
+  
+  * Book details page makes a call to an API to display the details about a book based off its ISBN
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/b490f931edf5e679f2389bda74370e6e36986e86/model.php#L322-L346 "Get Book Function")
 
-### Book List Page
-  asd
+  * It's also available in the 'model.php' file at lines 322-346
 
-  [Link to the code (in this github repo)](link " Function")
+* Book List Page
+  
+  * Book list page uses 'Delete' and 'Update' to remove books from your list or update their status/rating
 
-  It's also available in the 'model.php' file at lines 56-106
+  * [Link to the 'Delete' code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/b490f931edf5e679f2389bda74370e6e36986e86/model.php#L277-L293 "Delete Book in List Function")
 
-## Video Walkthrough
-  <a href="http://www.youtube.com/watch?feature=player_embedded&v=VpDVtJyyrN4
-  " target="_blank"><img src="http://img.youtube.com/vi/VpDVtJyyrN4/0.jpg" 
-  alt="Application Demonstration Video" width="240" height="180" border="5" /></a>
+  * It's also available in the 'model.php' file at lines 277-293
+
+  * [Link to the 'Update' code (in this github repo)](https://github.com/WestonV/CS3380-Spring2018-Final-Project/blob/b490f931edf5e679f2389bda74370e6e36986e86/model.php#L259-L275 "Update Book in List Function")
+
+  * It's also available in the 'model.php' file at lines 259-275

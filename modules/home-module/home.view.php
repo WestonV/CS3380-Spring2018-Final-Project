@@ -11,5 +11,17 @@
   </head>
   <body>
     <?php print $navbar ?>
+    <h1 class="text-center">Welcome to MyBookList!</h1>
+    <p class="text-center">
+      This website is used for creating/managing your list of books that you have read, plan-to-read, are work-in-progress, or have dropped.<br><br>
+
+      You can search for a book in the book-search page, or if you know the ISBN of the book you want you can do to this url:<br>
+        http://ec2-34-230-43-187.compute-1.amazonaws.com/book-details?isbn=ISBN_HERE<br>
+        Replace 'ISBN_HERE' with the ISBN you have.<br><br>
+
+      You can also search for users and view their book list, plus if you go to your own list you can edit any ratings/statuses for your books.<br><br>
+
+      The 'edit profile' button on your profile allows you to change your password, bio, and email.
+    </p>
   </body>
 </html>

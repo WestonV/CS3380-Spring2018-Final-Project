@@ -27,9 +27,6 @@
         float: right;
         width: 60%;
       }
-      #book-link{
-        color: white;
-      }
     </style>
   </head>
   <body>
@@ -39,7 +36,7 @@
         <h4><?php echo $profile->username ?></h1>
         <h5><?php echo $profile->joinDate ?></h4>
         <h5><?php echo $profile->email ?></h4>
-        <a id="book-link" href="/book-list?user=<?php echo $profile->username?>">View this users book list</a>
+        <a href="/book-list?user=<?php echo $profile->username?>">View this users book list</a>
         <?php
           if($editable == true){
             echo'<a href="/edit-profile">

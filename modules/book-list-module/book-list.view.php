@@ -11,32 +11,27 @@
   </head>
   <body>
     <?php print $navbar ?>
-    <?php
-      //var_dump($message);
-      //var_dump($data);
-      //var_dump($user);
-    ?>
     <table class="table">
-  <thead class="thead-light">
-    <tr>
-      <th scope="col">Image</th>
-      <th scope="col">Title</th>
-      <th scope="col">Status</th>
-      <th scope="col">Rating</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php
-      if (!empty($list)) {
-        foreach ($list as $book) {
-          include 'book-list-populate.php';
-        }
-      } else {
-        echo "<h2>Please add books to your list</h2>";
-      }
-    ?>
-  </tbody>
-</table>
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Title</th>
+          <th scope="col">Status</th>
+          <th scope="col">Rating</th>
+          <?php print $authenticated ? '<th scope="col">Action</th>' : '' ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+          if (!empty($list)) {
+            foreach ($list as $book) {
+              include 'book-list-populate.php';
+            }
+          } else {
+            echo "<h2>This users book list is empty!</h2>";
+          }
+        ?>
+      </tbody>
+    </table>
   </body>
 </html>

@@ -286,6 +286,8 @@
 
         if (!$success) {
           $this->message = $error;
+        } else {
+          header("Location: /book-list?user=" . $this->model->getUser()->username);
         }
       }
     }
